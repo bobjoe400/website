@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Script executed from: ${PWD}"
+for d in /var/www/*; do
+	echo "$d"
+	cd $d
+	jupyter nbconvert --to script *.ipynb
+done
