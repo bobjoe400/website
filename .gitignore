@@ -1,3 +1,6 @@
 
 html/.ipynb_checkpoints/*
 .ipynb_checkpoints/*
+__pycache__/*
+lib/__pycache__/*
+.git-ignore.swp
