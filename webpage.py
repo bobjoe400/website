@@ -1,20 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[12]:
 
 
-import cgi
-from create import main
-from lib.data_table import generate_html_with_table as ghwt
-from bs4 import BeautifulSoup as BS
+from tablecreate import createtable as ct
 
-soup = BS(open("index.html"),'html.parser')
+with open('html/index.html','w') as f:
+    s = '''<!DOCTYPE html>
+                <head>
+                    <style>
+                        table, th, td {
+                            border: 1px solid black;
+                            border-collapse: collapse;
+                        }
+                        table {
+                            width:100%;
+                        }
+                    </style>
+                </head>
+                <body>
+                    '''+ct()+'''
+                </body>
+            </html>'''
+    f.write(s)
 
-soup.body.append(str(main("TailNumbers.eml")))
 
-with open('index.html','w') as outf:
-    outf.write(str(soup))
+# In[ ]:
 
-print(soup)
+
+
 

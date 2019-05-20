@@ -5,79 +5,44 @@
 
 
 import numpy as np
+import sys
 
-def main(filename):
+fn = sys.argv[0]
+
+def emailparse(filename):
 
     file = open(filename)
     content = np.array(file.readlines())
     file.close()
-
-    counter = 0
-    start = 0
-    end = 0
-    gotems = 0
-    prev = '\n'
-    test = np.array(['\n','\n','\n','\n','\n','\n'])
     
-    for i,curr in enumerate(content):
-        if curr == '\n' and curr == prev:
-            counter +=1
-            start = i
-            break
-        prev = curr
-    new = np.array(content[start+1:])
-    for i,curr in enumerate(new):
-        currtest = np.array(new[i:i+6])
-        if np.array_equal(currtest, test):
-            gotems += 1
-        elif len(currtest[0]) > 9:
-            end = start+i
-            break
-    content = np.array(content[start+1:end-2])
-    content = np.where(content== '\n',content,np.char.strip(content,'\n'))
-    delete = []
-    for i,curr in enumerate(content):
-        if curr == '\n':
-            delete.append(i)
-    content = np.delete(content,delete)
-    new = np.array(content)
-    i = 0
-    while i < content.size:
-        currtest = np.array(content[i:i+7])
-        try:
-            test = int(currtest[6])
-            new = np.insert(new, i+3, 'no tail number')
-            content = new
-            newcurrtest = np.array(content[i:i+7])
-        except (TypeError, ValueError):
-            i+=7
-            continue
-        i+=7
+    index1 = np.argwhere(content == 'Content-Type: text/plain; charset="us-ascii"\n') #get index of start of plain (hehe) text data
+    index2 = np.argwhere(content== 'Content-Type: text/html; charset="us-ascii"\n') #get index of end of plain text data
+    index = np.append(index1,index2) #combine the two for ease
+    data = content[index[0]:index[1]] #make data set of that 
+    index = np.argwhere(data == '\n') #indexes of empty new line characters
+    data1 = np.delete(data,index)[2:-1] #deletion of new lines and edge triming
+    data2 = np.char.strip(data1,'\n') #stripping new line characters from leftover data
+    
+    #tests the first and last of a group of 6 data points to see if they are ints, we want the first one to be an int but not the second
+    #if the last is and int, we insert a NaN and reupdate the list we are working with. the continues on itarating the chunks of the list 
+    
+    data3 = []
     i=0
-    new = np.empty((7,))
-    while i < content.size:
-        new = np.vstack((new,content[i:i+7]))
-        i+=7
-    content = np.array(new[1:])
-    tomp = []
-    for i,a in enumerate(content):
-        temp = []
-        for j,b in enumerate(a):
-            if j is 0:
-                temp.append(int(b))
-            if j is 1:
-                temp.append(b)
-            if j is 2:
-                temp.append(b)
-            if j is 3:
-                temp.append(b)
-            if j is 4:
-                temp.append(int(b))
-            if j is 5:
-                temp.append(b)
-            if j is 6:
-                temp.append(b)
-        tomp.append(temp)
-    print("got here")
-    return(np.array(tomp))
+    while i < data2.size:
+        test = data2[i:i+7]
+        try:
+            int(test[0])
+            try:
+                int(test[6])
+                data2 = np.insert(data2,i+3,'NaN')
+            except:
+                pass
+            test = data2[i:i+7]
+            data3.append(test.tolist())
+            i+=7
+        except:
+            print('this shouldnt ever happen')
+    np.save("data",np.array(data3))           
+    return(data3)
 
+emailparse(fn)
