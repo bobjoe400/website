@@ -30,18 +30,18 @@ api = Client(url,username=username, password=apiKey)
 
 planes = np.load('data.npy')
 
-i=0
+# i=0
 
-#with pysnooper.snoop():
-while i < planes.size:
-    try:
-        test = planes[i][3]
-        result = api.service.FlightInfo(test,3)
-        flights = result['flights']
-        print(flights)
-    except WebFault:
-        pass
-    i+=1
+# #with pysnooper.snoop():
+# while i < planes.size:
+#     try:
+#         test = planes[i][3]
+#         result = api.service.FlightInfo(test,3)
+#         flights = result['flights']
+#         print(flights)
+#     except WebFault:
+#         pass
+#     i+=1
 
 # print(planes[18][3])
 # for p in planes:
