@@ -20,6 +20,9 @@ with open('html/index.html','w') as f:
                     </style>
                 </head>
                 <body>
+                    <form action="refresh.php" method="get">
+                        <input type="submit" value="Run me now!">
+                    </form>
                     '''+ct()+'''
                 </body>
             </html>'''
